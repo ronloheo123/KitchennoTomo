@@ -1,19 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="10dp"
     tools:context=".MainActivity">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/texttitle"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:text="Please enter the details below"
+        android:textSize="24dp"
+        android:layout_margin="20dp"
+         />
+    <EditText
+        android:id="@+id/ID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="number "
+        android:textSize="24dp"
+        android:layout_below="@+id/texttitle"
+        android:inputType="number"/>
+    <EditText
+        android:id="@+id/FoodName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="FoodName "
+        android:textSize="24dp"
+        android:layout_below="@+id/ID"
+        android:inputType="textCapWords"/>
+    <EditText
+        android:id="@+id/CategoryFood"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="CategoryFood "
+        android:textSize="24dp"
+        android:layout_below="@+id/FoodName"
+        android:inputType="textCapWords"/>
+    <Button
+        android:id="@+id/btnInsert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24dp"
+        android:text="Insert New Food"
+        android:layout_margin="30dp"
+        android:layout_below="@+id/FoodName"/>
+    <Button
+        android:id="@+id/btnUpdate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24dp"
+        android:text="Update New Data Food"
+        android:layout_below="@+id/btnInsert"/>
+    <Button
+        android:id="@+id/btnDelete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24dp"
+        android:text="Delete New Data"
+        android:layout_below="@+id/btnUpdate"/>
+    <Button
+        android:id="@+id/btnView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="24dp"
+        android:text="ViewData"
+        android:layout_below="@+id/btnDelete"/>
+</RelativeLayout>
