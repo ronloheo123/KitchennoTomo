@@ -12,61 +12,104 @@
         android:id="@+id/texttitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Please enter the details below"
-        android:textSize="24dp"
-        android:layout_margin="20dp"
-         />
-    <EditText
+        android:text="Please enter the Food Name"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-medium"
+        android:layout_margin="16dp" />
+
+    <TextView
         android:id="@+id/ID"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="number "
-        android:textSize="24dp"
+        android:text="ID: "
+        android:textSize="16sp"
+        android:textColor="?android:attr/textColorSecondary"
         android:layout_below="@+id/texttitle"
-        android:inputType="number"/>
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp" />
+
     <EditText
         android:id="@+id/FoodName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="FoodName "
-        android:textSize="24dp"
+        android:hint="FoodName"
+        android:textSize="18sp"
+        android:padding="12dp"
         android:layout_below="@+id/ID"
-        android:inputType="textCapWords"/>
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="?attr/colorAccent"
+        android:inputType="textCapWords" />
+
     <EditText
-        android:id="@+id/CategoryFood"
+        android:id="@+id/FoodCategory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="CategoryFood "
-        android:textSize="24dp"
         android:layout_below="@+id/FoodName"
-        android:inputType="textCapWords"/>
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="118dp"
+        android:backgroundTint="?attr/colorAccent"
+        android:hint="CategoryFood"
+        android:inputType="textCapWords"
+        android:padding="12dp"
+        android:textSize="18sp" />
+
     <Button
         android:id="@+id/btnInsert"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="24dp"
+        android:layout_below="@+id/FoodName"
+        android:layout_margin="16dp"
+        android:layout_marginTop="162dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="?attr/colorPrimary"
+        android:fontFamily="sans-serif-medium"
         android:text="Insert New Food"
-        android:layout_margin="30dp"
-        android:layout_below="@+id/FoodName"/>
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+
     <Button
         android:id="@+id/btnUpdate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="24dp"
+        android:layout_below="@+id/btnInsert"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="161dp"
+        android:backgroundTint="?attr/colorPrimary"
+        android:fontFamily="sans-serif-medium"
         android:text="Update New Data Food"
-        android:layout_below="@+id/btnInsert"/>
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+
     <Button
         android:id="@+id/btnDelete"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="24dp"
+        android:layout_below="@+id/btnUpdate"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="78dp"
+        android:backgroundTint="?attr/colorPrimary"
+        android:fontFamily="sans-serif-medium"
         android:text="Delete New Data"
-        android:layout_below="@+id/btnUpdate"/>
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+
     <Button
         android:id="@+id/btnView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="24dp"
+        android:layout_below="@+id/btnDelete"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="167dp"
+        android:backgroundTint="?attr/colorPrimary"
+        android:fontFamily="sans-serif-medium"
         android:text="ViewData"
-        android:layout_below="@+id/btnDelete"/>
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
 </RelativeLayout>

@@ -21,7 +21,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "CREATE TABLE IF NOT EXISTS Food (" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT, " +   // AUTOINCREMENT
                         "FoodName TEXT NOT NULL, " +
-                        "CategoryFood TEXT" +
+                        "FoodCategory TEXT" +
                         ");"
         );
     }
@@ -33,11 +33,11 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     // CREATE
-    public boolean insertFood(String foodName, String categoryFood) {
+    public boolean insertFood(String foodName, String FoodCategory) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("FoodName", foodName);
-        values.put("CategoryFood", categoryFood);
+        values.put("FoodCategory", FoodCategory);
         long result = db.insert("Food", null, values);
         db.close();
         return result != -1;
@@ -50,11 +50,11 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     // UPDATE
-    public boolean updateFood(int id, String newFoodName, String newCategoryFood) {
+    public boolean updateFood(int id, String newFoodName, String newFoodCategory) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         if (newFoodName != null) values.put("FoodName", newFoodName);
-        if (newCategoryFood != null) values.put("CategoryFood", newCategoryFood);
+        if (newFoodCategory != null) values.put("FoodCategory", newFoodCategory);
         int rows = db.update("Food", values, "id=?", new String[]{String.valueOf(id)});
         db.close();
         return rows > 0;
