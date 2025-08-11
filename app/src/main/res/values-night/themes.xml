@@ -1,7 +1,11 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.KitchennoTomo" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+<resources>
+    <style name="Theme.KitchenNoTomo" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="windowSplashScreenBackground">@drawable/bg_splash</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/icontrang</item>
+        <item name="windowSplashScreenAnimationDuration">120</item>
+        <item name="postSplashScreenTheme">@style/Theme.KitchenNoTomo</item>
+
+        <!-- fallback Android < 12 -->
+        <item name="android:windowBackground">@drawable/bg_splash</item>
     </style>
 </resources>
