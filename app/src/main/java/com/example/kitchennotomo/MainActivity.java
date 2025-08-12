@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Cal
 
         // 3.6) FAB chat
         ImageButton fab = findViewById(R.id.fabChat);
-        fab.setOnClickListener(v ->
+        findViewById(R.id.fabChat).setOnClickListener(v ->
                 startActivity(new android.content.Intent(this, ChatActivity.class))
         );
     }
