@@ -26,8 +26,10 @@
         android:contentDescription="logo right"
         app:layout_constraintBottom_toTopOf="@+id/divider"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/ivHeaderLeft"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/iconchu" />
 
     <View
@@ -43,7 +45,7 @@
     <!-- SEARCH -->
     <LinearLayout
         android:id="@+id/searchBox"
-        android:layout_width="0dp"
+        android:layout_width="340dp"
         android:layout_height="48dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/bg_search"

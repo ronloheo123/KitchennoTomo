@@ -6,4 +6,5 @@
     <color name="yellowAccent">#D7FF47</color>
     <color name="surface">#FFFFFF</color>
     <color name="textPrimary">#103A1E</color>
+    <color name="grayText">#888888</color>
 </resources>
