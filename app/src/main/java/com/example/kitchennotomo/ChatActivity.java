@@ -16,6 +16,13 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -23,13 +30,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ChatActivity extends AppCompatActivity {
     private ChatAdapter adapter;
@@ -40,12 +40,13 @@ public class ChatActivity extends AppCompatActivity {
     private final OkHttpClient http = new OkHttpClient();
     private final List<ChatMsg> history = new ArrayList<>();
 
-    @Override protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_chat);
 
-        // Áp dụng WindowInsets nếu root có id="main"
+        // Insets
         View root = findViewById(R.id.main);
         if (root != null) {
             ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
@@ -70,9 +71,9 @@ public class ChatActivity extends AppCompatActivity {
             return false;
         });
 
-        ensureApiKey(); // hỏi key nếu chưa có
+        ensureApiKey(); // hỏi API key
 
-        // Lời chào ban đầu (tiếng Nhật)
+        // Lời chào
         postBot("こんにちは！食材からレシピを提案できます。何がありますか？");
     }
 
@@ -81,14 +82,14 @@ public class ChatActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(k)) return;
 
         final EditText input = new EditText(this);
-        input.setHint("sk-xxxxxxxxxxxxxxxx");
+        input.setHint("Nhập API key OpenRouter");
 
         new AlertDialog.Builder(this)
-                .setTitle("OpenAI APIキーを入力")
-                .setMessage("このキーは端末内（SharedPreferences）にのみ保存されます。")
+                .setTitle("Nhập API key")
+                .setMessage("Key này sẽ được lưu cục bộ trên thiết bị.")
                 .setView(input)
                 .setCancelable(false)
-                .setPositiveButton("保存", (d, w) -> {
+                .setPositiveButton("Lưu", (d, w) -> {
                     String v = input.getText().toString().trim();
                     if (!TextUtils.isEmpty(v)) {
                         ApiKeyStore.save(this, v);
@@ -107,7 +108,7 @@ public class ChatActivity extends AppCompatActivity {
         adapter.add(user);
         rv.scrollToPosition(adapter.getItemCount() - 1);
 
-        callOpenAI(); // gọi API sau khi đã thêm vào history
+        callDeepSeek();
     }
 
     private void postBot(String text) {
@@ -119,9 +120,7 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    private void callOpenAI() { callOpenAIWithRetry(0); }
-
-    private void callOpenAIWithRetry(int attempt) {
+    private void callDeepSeek() {
         String apiKey = ApiKeyStore.get(this);
         if (TextUtils.isEmpty(apiKey)) {
             postBot("（エラー）APIキーが未設定です。メニューからキーを入力してください。");
@@ -129,17 +128,26 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         try {
-            // Body cho Chat Completions
             JSONObject body = new JSONObject();
-            body.put("model", "gpt-4o-mini");
-            body.put("max_tokens", 256);   // giới hạn độ dài trả lời
-            body.put("temperature", 0.6);
+            body.put("model", "deepseek/deepseek-r1:free");
 
-            // Chỉ gửi 8 lượt gần nhất để giảm tokens
             JSONArray messages = new JSONArray();
             messages.put(new JSONObject()
                     .put("role", "system")
-                    .put("content", "You are a friendly cooking assistant. Answer concisely and suggest recipes from available ingredients in Japanese."));
+                    .put("content",
+                            "あなたは料理アシスタントです。必ず次の形式で答え、常に3品だけの料理を提案してください：\n" +
+                                    "料理1: [料理名1]\n" +
+                                    "必要な材料: [材料1], [材料2], [材料3]\n" +
+                                    "作り方: [約100文字程度の詳細な作り方]\n\n" +
+                                    "料理2: [料理名2]\n" +
+                                    "必要な材料: [材料1], [材料2], [材料3]\n" +
+                                    "作り方: [約100文字程度の詳細な作り方]\n\n" +
+                                    "料理3: [料理名3]\n" +
+                                    "必要な材料: [材料1], [材料2], [材料3]\n" +
+                                    "作り方: [約100文字程度の詳細な作り方]\n\n" +
+                                    "この形式以外の前置きや締めくくりは絶対に入れないこと。"
+                    ));
+
             int start = Math.max(0, history.size() - 8);
             for (int i = start; i < history.size(); i++) {
                 ChatMsg m = history.get(i);
@@ -151,59 +159,34 @@ public class ChatActivity extends AppCompatActivity {
 
             MediaType JSON = MediaType.get("application/json; charset=utf-8");
             Request req = new Request.Builder()
-                    .url("https://api.openai.com/v1/chat/completions")
+                    .url("https://openrouter.ai/api/v1/chat/completions")
                     .header("Authorization", "Bearer " + apiKey)
+                    .header("HTTP-Referer", "https://google.com")
+                    .header("X-Title", "KitchennoTomo Android")
                     .header("Content-Type", "application/json")
                     .post(RequestBody.create(body.toString(), JSON))
                     .build();
 
             http.newCall(req).enqueue(new Callback() {
                 @Override public void onFailure(Call call, IOException e) {
-                    postBot("（エラー）接続に失敗しました。もう一度お試しください。");
+                    postBot("（エラー）接続に失敗しました: " + e.getMessage());
                 }
 
                 @Override public void onResponse(Call call, Response resp) throws IOException {
                     String text = (resp.body() != null) ? resp.body().string() : "";
-
-                    if (resp.code() == 429) {
-                        // quota hết?
-                        if (text.contains("insufficient_quota") || text.toLowerCase().contains("usage limit")) {
-                            postBot("（エラー）ご利用上限に達しました。請求設定または使用制限を確認してください。");
-                            return;
-                        }
-                        // rate limit: retry với backoff / Retry-After
-                        long delayMs = 0;
-                        String ra = resp.header("Retry-After");
-                        if (ra != null) try { delayMs = Long.parseLong(ra) * 1000L; } catch (Exception ignore) {}
-                        if (delayMs == 0) delayMs = (long) Math.min(8000, Math.pow(2, attempt) * 1000); // 1s, 2s, 4s...
-                        if (attempt < 2) {
-                            postBot("（エラー）リクエストが多すぎます。約 " + (delayMs/1000) + " 秒後に再試行します。");
-                            long d = delayMs;
-                            runOnUiThread(() ->
-                                    new android.os.Handler(getMainLooper())
-                                            .postDelayed(() -> callOpenAIWithRetry(attempt + 1), d));
-                        } else {
-                            postBot("（エラー）しばらくしてから、もう一度お試しください。");
-                        }
-                        return;
-                    }
-
                     if (!resp.isSuccessful()) {
-                        if (text.contains("insufficient_quota") || text.toLowerCase().contains("usage limit")) {
-                            postBot("（エラー）ご利用上限に達しました。請求設定または使用制限を確認してください。");
-                        } else {
-                            postBot("（エラー）応答コード: " + resp.code());
-                        }
+                        postBot("（エラー）応答コード: " + resp.code());
                         return;
                     }
-
                     try {
                         JSONObject obj = new JSONObject(text);
                         String content = obj.getJSONArray("choices")
                                 .getJSONObject(0)
                                 .getJSONObject("message")
-                                .getString("content");
-                        postBot(content.trim());
+                                .getString("content")
+                                .replaceAll("(?s)<think>.*?</think>", "")
+                                .trim();
+                        postBot(content);
                     } catch (Exception ex) {
                         postBot("（エラー）応答の解析に失敗しました。");
                     }

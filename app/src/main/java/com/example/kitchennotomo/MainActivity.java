@@ -1,5 +1,7 @@
 package com.example.kitchennotomo;
 
+import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -8,7 +10,6 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,11 +26,11 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Dữ liệu cho CustomAdapter
     private ArrayList<String> ids = new ArrayList<>();
     private ArrayList<String> names = new ArrayList<>();
     private ArrayList<String> categories = new ArrayList<>();
     private CustomAdapter adapter;
+    private RecyclerView rv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,17 +55,11 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        // Dữ liệu mẫu
-        ids.clear();
-        names.clear();
-        categories.clear();
-        ids.add("1"); names.add("たまごチャーハン"); categories.add("中華");
-        ids.add("2"); names.add("トマトスープ"); categories.add("スープ");
-
-        // RecyclerView + CustomAdapter
-        RecyclerView rv = findViewById(R.id.rvRecipes);
+        // RecyclerView
+        rv = findViewById(R.id.rvRecipes);
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setClipToPadding(false);
+
         adapter = new CustomAdapter(this, this, ids, names, categories);
         rv.setAdapter(adapter);
 
@@ -74,40 +69,68 @@ public class MainActivity extends AppCompatActivity {
             @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
             @Override public void onTextChanged(CharSequence s, int st, int b, int c) {}
             @Override public void afterTextChanged(Editable s) {
-                String q = s.toString().trim();
-                filterList(q);
+                filterList(s.toString().trim());
             }
         });
 
-        MaterialCardView add_button = findViewById(R.id.add_button);
-        if (add_button != null) {
-            add_button.setOnClickListener(v -> {
-                startActivity(new android.content.Intent(this, AddActivity.class));
+        // Nút thêm recipe → mở AddActivity
+        MaterialCardView addButton = findViewById(R.id.add_button);
+        if (addButton != null) {
+            addButton.setOnClickListener(v -> {
+                Intent intent = new Intent(this, AddActivity.class);
+                startActivityForResult(intent, 1);
             });
         }
-        // FAB chat
+
+        // Nút chat
         ImageButton fab = findViewById(R.id.fabChat);
         if (fab != null) {
             fab.setOnClickListener(v ->
-                    startActivity(new android.content.Intent(this, ChatActivity.class))
+                    startActivity(new Intent(this, ChatActivity.class))
             );
         }
+
+        // Load data ban đầu
+        loadDataFromDatabase();
     }
-    // Nút Thêm Recipe
 
     private void filterList(String query) {
         ArrayList<String> fIds = new ArrayList<>();
         ArrayList<String> fNames = new ArrayList<>();
         ArrayList<String> fCats = new ArrayList<>();
         for (int i = 0; i < names.size(); i++) {
-            if (names.get(i).contains(query) || categories.get(i).contains(query)) {
+            if (names.get(i).toLowerCase().contains(query.toLowerCase()) ||
+                    categories.get(i).toLowerCase().contains(query.toLowerCase())) {
                 fIds.add(ids.get(i));
                 fNames.add(names.get(i));
                 fCats.add(categories.get(i));
             }
         }
-        adapter = new CustomAdapter(this, this, fIds, fNames, fCats);
-        RecyclerView rv = findViewById(R.id.rvRecipes);
-        rv.setAdapter(adapter);
+        rv.setAdapter(new CustomAdapter(this, this, fIds, fNames, fCats));
+    }
+
+    private void loadDataFromDatabase() {
+        MyDatabaseHelper myDB = new MyDatabaseHelper(this);
+        Cursor cursor = myDB.readAllData();
+
+        ids.clear();
+        names.clear();
+        categories.clear();
+
+        while (cursor.moveToNext()) {
+            ids.add(cursor.getString(0));
+            names.add(cursor.getString(1));
+            categories.add(cursor.getString(2));
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+    // Nhận dữ liệu trả về từ Add/Update
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            loadDataFromDatabase();
+        }
     }
 }

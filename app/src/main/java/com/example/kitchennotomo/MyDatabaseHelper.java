@@ -41,7 +41,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long addFood(String foodname, String foodcategory) {
+    /** Thêm công thức mới */
+    public long addRecipe(String foodname, String foodcategory) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_FOOD_NAME, foodname);
@@ -57,38 +58,46 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
         }
         return result;
     }
-    Cursor readAllData(){
-        String querry="SELECT * FROM " +TABLE_NAME;
+
+    /** Đọc toàn bộ dữ liệu */
+    public Cursor readAllData() {
+        String query = "SELECT * FROM " + TABLE_NAME;
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor=null;
-        if(db!=null){
-            cursor=db.rawQuery(querry,null);
+        Cursor cursor = null;
+        if (db != null) {
+            cursor = db.rawQuery(query, null);
         }
         return cursor;
     }
-    void updateData(String row_id,String foodname,String foodcategory){
-        SQLiteDatabase db= this.getReadableDatabase();
-        ContentValues cv= new ContentValues();
-        cv.put(COLUMN_FOOD_NAME,foodname);
-        cv.put(COLUMN_FOOD_CATEGORY,foodcategory);
-        long result= db.update(TABLE_NAME,cv,"_id=?",new String[]{row_id});
-        if(result==-1){
-            Toast.makeText(context,"Failed to Update", Toast.LENGTH_SHORT).show();
-        }else{
-            Toast.makeText(context,"Successfully Update", Toast.LENGTH_SHORT).show();
+
+    /** Cập nhật công thức */
+    public void updateData(String row_id, String foodname, String foodcategory) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_FOOD_NAME, foodname);
+        cv.put(COLUMN_FOOD_CATEGORY, foodcategory);
+        long result = db.update(TABLE_NAME, cv, "_id=?", new String[]{row_id});
+        if (result == -1) {
+            Toast.makeText(context, "Failed to Update", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Successfully Updated", Toast.LENGTH_SHORT).show();
         }
     }
-    void deleteOneRow(String row_id){
-        SQLiteDatabase db= this.getWritableDatabase();
-        long results =  db.delete(TABLE_NAME, "_id=?",new String[]{row_id});
-        if(results ==-1){
-            Toast.makeText(context,"Failed to Delete",Toast.LENGTH_SHORT).show();
-        }else{
-            Toast.makeText(context,"Succesfully Delete",Toast.LENGTH_SHORT).show();
+
+    /** Xóa 1 công thức */
+    public void deleteOneRow(String row_id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        long results = db.delete(TABLE_NAME, "_id=?", new String[]{row_id});
+        if (results == -1) {
+            Toast.makeText(context, "Failed to Delete", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Successfully Deleted", Toast.LENGTH_SHORT).show();
         }
     }
-    void deleteAllData(){
-        SQLiteDatabase db= this.getWritableDatabase();
-        db.execSQL("DELETE FROM "+TABLE_NAME);
+
+    /** Xóa toàn bộ dữ liệu */
+    public void deleteAllData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_NAME);
     }
 }
