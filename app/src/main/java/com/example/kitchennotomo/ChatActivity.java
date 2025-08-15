@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
@@ -35,10 +36,13 @@ public class ChatActivity extends AppCompatActivity {
     private ChatAdapter adapter;
     private RecyclerView rv;
     private EditText et;
-    private ImageButton btn;
+    private ImageButton btn, btnSave;
 
     private final OkHttpClient http = new OkHttpClient();
     private final List<ChatMsg> history = new ArrayList<>();
+    private String lastBotReply = ""; // Lưu câu trả lời gần nhất
+
+    private MyDatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +63,9 @@ public class ChatActivity extends AppCompatActivity {
         rv  = findViewById(R.id.rvChat);
         et  = findViewById(R.id.etMsg);
         btn = findViewById(R.id.btnSend);
+        btnSave = findViewById(R.id.btnSave);
+
+        dbHelper = new MyDatabaseHelper(this);
 
         adapter = new ChatAdapter();
         rv.setLayoutManager(new LinearLayoutManager(this));
@@ -66,6 +73,8 @@ public class ChatActivity extends AppCompatActivity {
         rv.setClipToPadding(false);
 
         btn.setOnClickListener(v -> send());
+        btnSave.setOnClickListener(v -> saveRecipesFromBotReply());
+
         et.setOnEditorActionListener((tv, actionId, e) -> {
             if (actionId == EditorInfo.IME_ACTION_SEND) { send(); return true; }
             return false;
@@ -112,6 +121,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void postBot(String text) {
+        lastBotReply = text;
         ChatMsg bot = new ChatMsg(ChatMsg.BOT, text);
         history.add(bot);
         runOnUiThread(() -> {
@@ -196,5 +206,32 @@ public class ChatActivity extends AppCompatActivity {
         } catch (Exception e) {
             postBot("（エラー）リクエストの作成に失敗しました。");
         }
+    }
+    /** Parse và lưu vào DB */
+    private void saveRecipesFromBotReply() {
+        if (TextUtils.isEmpty(lastBotReply)) {
+            Toast.makeText(this, "Chưa có dữ liệu để lưu", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String[] lines = lastBotReply.split("\n");
+        String currentName = "";
+        String currentDesc = "";
+
+        for (String line : lines) {
+            line = line.trim();
+            if (line.startsWith("Món") || line.startsWith("料理")) {
+                currentName = line.replaceAll("^(Món\\s*\\d+:\\s*|料理\\d+:\\s*)", "").trim();
+            } else if (line.startsWith("Cách làm") || line.startsWith("作り方")) {
+                currentDesc = line.replace("Cách làm:", "").trim();
+                if (!currentName.isEmpty() && !currentDesc.isEmpty()) {
+                    dbHelper.addRecipe(currentName, currentDesc);
+                    currentName = "";
+                    currentDesc = "";
+                }
+            }
+        }
+
+        Toast.makeText(this, "Đã lưu công thức vào DB", Toast.LENGTH_SHORT).show();
     }
 }

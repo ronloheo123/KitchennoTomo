@@ -56,33 +56,46 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-    <!-- Tên món ăn -->
-    <EditText
-        android:id="@+id/foodname"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="料理名を入力"
-        android:inputType="text"
-        android:background="@drawable/bg_edittext"
-        android:textColor="@color/textPrimary"
-        android:textColorHint="@color/grayText"
-        android:padding="12dp"
-        android:layout_marginTop="24dp" />
+        <!-- Tên món ăn -->
+        <EditText
+            android:id="@+id/foodname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="料理名を入力"
+            android:inputType="textMultiLine"
+            android:scrollHorizontally="false"
+            android:ellipsize="none"
+            android:singleLine="false"
+            android:minLines="1"
+            android:maxLines="5"
+            android:overScrollMode="always"
+            android:background="@drawable/bg_edittext"
+            android:textColor="@color/textPrimary"
+            android:textColorHint="@color/grayText"
+            android:padding="12dp"
+            android:layout_marginTop="24dp" />
 
-    <!-- Loại món -->
-    <EditText
-        android:id="@+id/foodcategory"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="カテゴリーを入力"
-        android:inputType="text"
-        android:background="@drawable/bg_edittext"
-        android:textColor="@color/textPrimary"
-        android:textColorHint="@color/grayText"
-        android:padding="12dp"
-        android:layout_marginTop="16dp" />
+        <!-- Loại món -->
+        <EditText
+            android:id="@+id/foodcategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="カテゴリーを入力"
+            android:inputType="textMultiLine"
+            android:scrollHorizontally="false"
+            android:ellipsize="none"
+            android:singleLine="false"
+            android:minLines="1"
+            android:maxLines="5"
+            android:overScrollMode="always"
+            android:background="@drawable/bg_edittext"
+            android:textColor="@color/textPrimary"
+            android:textColorHint="@color/grayText"
+            android:padding="12dp"
+            android:layout_marginTop="16dp" />
 
-    <!-- Nút Add -->
+
+        <!-- Nút Add -->
     <Button
         android:id="@+id/add_button"
         android:layout_width="wrap_content"

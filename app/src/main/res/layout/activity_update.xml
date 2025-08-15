@@ -47,7 +47,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="料理名を入力"
-        android:inputType="text"
+        android:inputType="textMultiLine"
+        android:scrollHorizontally="false"
+        android:ellipsize="none"
+        android:singleLine="false"
+        android:minLines="1"
+        android:maxLines="5"
+        android:overScrollMode="always"
         android:background="@drawable/bg_edittext"
         android:textColor="@color/textPrimary"
         android:textColorHint="@color/grayText"
@@ -63,7 +69,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="カテゴリーを入力"
-        android:inputType="text"
+        android:inputType="textMultiLine"
+        android:scrollHorizontally="false"
+        android:ellipsize="none"
+        android:singleLine="false"
+        android:minLines="1"
+        android:maxLines="5"
+        android:overScrollMode="always"
         android:background="@drawable/bg_edittext"
         android:textColor="@color/textPrimary"
         android:textColorHint="@color/grayText"
@@ -72,6 +84,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp" />
+
 
     <!-- Nút Update -->
     <Button

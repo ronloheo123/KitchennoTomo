@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> categories = new ArrayList<>();
     private CustomAdapter adapter;
     private RecyclerView rv;
+    private MyDatabaseHelper myDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.splash);
 
+        // Sau 0.9s mới vào UI chính
         new Handler(Looper.getMainLooper()).postDelayed(this::initHomeUi, 900);
     }
 
@@ -54,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
                 return insets;
             });
         }
+
+        // Khởi tạo DB
+        myDB = new MyDatabaseHelper(this);
 
         // RecyclerView
         rv = findViewById(R.id.rvRecipes);
@@ -73,12 +78,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Nút thêm recipe → mở AddActivity
+        // Nút thêm recipe
         MaterialCardView addButton = findViewById(R.id.add_button);
         if (addButton != null) {
             addButton.setOnClickListener(v -> {
                 Intent intent = new Intent(this, AddActivity.class);
-                startActivityForResult(intent, 1);
+                startActivity(intent);
             });
         }
 
@@ -110,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadDataFromDatabase() {
-        MyDatabaseHelper myDB = new MyDatabaseHelper(this);
         Cursor cursor = myDB.readAllData();
 
         ids.clear();
@@ -125,11 +129,11 @@ public class MainActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
-    // Nhận dữ liệu trả về từ Add/Update
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
+    protected void onResume() {
+        super.onResume();
+        // Chỉ load lại khi UI đã khởi tạo
+        if (rv != null && adapter != null && myDB != null) {
             loadDataFromDatabase();
         }
     }
